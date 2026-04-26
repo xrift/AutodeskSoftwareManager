@@ -29,14 +29,15 @@ $sw.Stop()
 if ($LASTEXITCODE -ne 0) {
     Write-Host ''
     Write-Host '  PUBLISH FAILED' -ForegroundColor Red
-    exit 1
+} else {
+    $exe = Get-ChildItem $outDir -Filter 'AutodeskSoftwareManager.exe' | Select-Object -First 1
+    $mb  = [math]::Round($exe.Length / 1MB, 1)
+    Write-Host ''
+    Write-Host ('  Publish succeeded in ' + $sw.Elapsed.TotalSeconds.ToString('0.0') + 's') -ForegroundColor Green
+    Write-Host ('  Executable : ' + $exe.FullName) -ForegroundColor White
+    Write-Host ('  Size       : ' + $mb + ' MB') -ForegroundColor DarkGray
 }
 
-$exe = Get-ChildItem $outDir -Filter 'AutodeskSoftwareManager.exe' | Select-Object -First 1
-$mb  = [math]::Round($exe.Length / 1MB, 1)
-
 Write-Host ''
-Write-Host ('  Publish succeeded in ' + $sw.Elapsed.TotalSeconds.ToString('0.0') + 's') -ForegroundColor Green
-Write-Host ('  Executable : ' + $exe.FullName) -ForegroundColor White
-Write-Host ('  Size       : ' + $mb + ' MB') -ForegroundColor DarkGray
-Write-Host ''
+Write-Host '  Press any key to close...' -ForegroundColor DarkGray
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
