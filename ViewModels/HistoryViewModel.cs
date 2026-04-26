@@ -60,11 +60,11 @@ public partial class HistoryViewModel : ObservableObject
 
     // ── Filter ────────────────────────────────────────────────────────────────
 
-    partial void OnSearchTextChanged(string _)      => HistoryView.Refresh();
-    partial void OnSelectedPackageChanged(string _) => HistoryView.Refresh();
-    partial void OnSelectedResultChanged(string _)  => HistoryView.Refresh();
-    partial void OnDateFromChanged(DateTime? _)     => HistoryView.Refresh();
-    partial void OnDateToChanged(DateTime? _)       => HistoryView.Refresh();
+    partial void OnSearchTextChanged(string value)      => HistoryView.Refresh();
+    partial void OnSelectedPackageChanged(string value) => HistoryView.Refresh();
+    partial void OnSelectedResultChanged(string value)  => HistoryView.Refresh();
+    partial void OnDateFromChanged(DateTime? value)     => HistoryView.Refresh();
+    partial void OnDateToChanged(DateTime? value)       => HistoryView.Refresh();
 
     private bool ApplyFilter(object obj)
     {

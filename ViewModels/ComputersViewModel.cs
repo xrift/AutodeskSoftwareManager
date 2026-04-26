@@ -85,11 +85,11 @@ public partial class ComputersViewModel : ObservableObject
 
     // ── Filter ────────────────────────────────────────────────────────────────
 
-    partial void OnSearchTextChanged(string _)    => ComputerView.Refresh();
-    partial void OnSelectedOUChanged(string _)    => ComputerView.Refresh();
-    partial void OnSelectedStatusChanged(string _)=> ComputerView.Refresh();
-    partial void OnHasAutodeskChanged(bool _)     => ComputerView.Refresh();
-    partial void OnHasOutdatedChanged(bool _)     => ComputerView.Refresh();
+    partial void OnSearchTextChanged(string value)     => ComputerView.Refresh();
+    partial void OnSelectedOUChanged(string value)     => ComputerView.Refresh();
+    partial void OnSelectedStatusChanged(string value) => ComputerView.Refresh();
+    partial void OnHasAutodeskChanged(bool value)      => ComputerView.Refresh();
+    partial void OnHasOutdatedChanged(bool value)      => ComputerView.Refresh();
 
     private bool ApplyFilter(object obj)
     {

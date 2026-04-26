@@ -98,38 +98,52 @@ public class DatabaseService
     public IEnumerable<InstalledProduct> GetAllInstalled()
     {
         using var conn = Database.Open();
-        return conn.Query<InstalledProduct>(@"
+        var products = conn.Query<InstalledProduct>(@"
             SELECT
                 s.id Id, s.computer_id ComputerId, s.catalog_id CatalogId,
                 c.name ComputerName, c.ou ComputerOU,
                 s.display_name DisplayName, s.product_family ProductFamily,
                 s.display_version DisplayVersion, s.latest_version LatestVersion,
                 s.install_date InstallDate, s.install_location InstallLocation,
-                s.uninstall_key UninstallKey, s.scanned_at ScannedAt,
-                CASE WHEN s.latest_version != '' AND s.display_version != ''
-                          AND s.display_version < s.latest_version THEN 1 ELSE 0 END IsOutdated
+                s.uninstall_key UninstallKey, s.scanned_at ScannedAt
             FROM installed_software s
             JOIN computers c ON c.id = s.computer_id
-            ORDER BY c.name, s.display_name;");
+            ORDER BY c.name, s.display_name;").ToList();
+
+        foreach (var p in products)
+            p.IsOutdated = ComputeIsOutdated(p.DisplayVersion, p.LatestVersion);
+
+        return products;
     }
 
     public IEnumerable<InstalledProduct> GetInstalledForComputer(int computerId)
     {
         using var conn = Database.Open();
-        return conn.Query<InstalledProduct>(@"
+        var products = conn.Query<InstalledProduct>(@"
             SELECT
                 s.id Id, s.computer_id ComputerId, s.catalog_id CatalogId,
                 c.name ComputerName, c.ou ComputerOU,
                 s.display_name DisplayName, s.product_family ProductFamily,
                 s.display_version DisplayVersion, s.latest_version LatestVersion,
                 s.install_date InstallDate, s.install_location InstallLocation,
-                s.uninstall_key UninstallKey, s.scanned_at ScannedAt,
-                CASE WHEN s.latest_version != '' AND s.display_version != ''
-                          AND s.display_version < s.latest_version THEN 1 ELSE 0 END IsOutdated
+                s.uninstall_key UninstallKey, s.scanned_at ScannedAt
             FROM installed_software s
             JOIN computers c ON c.id = s.computer_id
             WHERE s.computer_id = @id
-            ORDER BY s.display_name;", new { id = computerId });
+            ORDER BY s.display_name;", new { id = computerId }).ToList();
+
+        foreach (var p in products)
+            p.IsOutdated = ComputeIsOutdated(p.DisplayVersion, p.LatestVersion);
+
+        return products;
+    }
+
+    private static bool ComputeIsOutdated(string installed, string latest)
+    {
+        if (string.IsNullOrEmpty(installed) || string.IsNullOrEmpty(latest)) return false;
+        if (!Version.TryParse(installed, out var v1)) return false;
+        if (!Version.TryParse(latest,    out var v2)) return false;
+        return v1 < v2;
     }
 
     public void ReplaceInstalledSoftware(int computerId, IEnumerable<InstalledProduct> products)

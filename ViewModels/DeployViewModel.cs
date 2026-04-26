@@ -71,8 +71,8 @@ public partial class DeployViewModel : ObservableObject
 
     // ── Commands ──────────────────────────────────────────────────────────────
 
-    partial void OnSelectedPackageChanged(DeploymentPackage? _) => RefreshTargets();
-    partial void OnTargetFilterChanged(string _) => RefreshTargets();
+    partial void OnSelectedPackageChanged(DeploymentPackage? value) => RefreshTargets();
+    partial void OnTargetFilterChanged(string value) => RefreshTargets();
 
     [RelayCommand]
     private void SelectAllOutdated()

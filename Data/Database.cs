@@ -1,3 +1,4 @@
+using System.Data;
 using System.IO;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -16,6 +17,8 @@ public static class Database
         _connectionString = $"Data Source={dbPath};";
 
         Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+
+        SqlMapper.AddTypeHandler(new BoolTypeHandler());
 
         using var conn = Open();
         conn.Execute("PRAGMA journal_mode=WAL;");
@@ -104,6 +107,18 @@ public static class Database
                 value TEXT NOT NULL DEFAULT ''
             );
         ");
+    }
+
+    private class BoolTypeHandler : SqlMapper.TypeHandler<bool>
+    {
+        public override bool Parse(object value) =>
+            value is not null && Convert.ToInt64(value) != 0;
+
+        public override void SetValue(IDbDataParameter parameter, bool value)
+        {
+            parameter.DbType = DbType.Int32;
+            parameter.Value  = value ? 1 : 0;
+        }
     }
 
     private static void SeedCatalog(SqliteConnection conn)

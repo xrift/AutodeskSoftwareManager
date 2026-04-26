@@ -83,10 +83,10 @@ public partial class InventoryViewModel : ObservableObject
 
     // ── Filter ────────────────────────────────────────────────────────────────
 
-    partial void OnSearchTextChanged(string _)     => ProductView.Refresh();
-    partial void OnSelectedFamilyChanged(string _) => ProductView.Refresh();
-    partial void OnSelectedStatusChanged(string _) => ProductView.Refresh();
-    partial void OnSelectedOUChanged(string _)     => ProductView.Refresh();
+    partial void OnSearchTextChanged(string value)     => ProductView.Refresh();
+    partial void OnSelectedFamilyChanged(string value) => ProductView.Refresh();
+    partial void OnSelectedStatusChanged(string value) => ProductView.Refresh();
+    partial void OnSelectedOUChanged(string value)     => ProductView.Refresh();
 
     private bool ApplyFilter(object obj)
     {
