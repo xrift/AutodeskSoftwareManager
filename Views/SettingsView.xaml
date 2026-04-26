@@ -6,155 +6,128 @@
 
             <TextBlock Text="Settings" FontSize="20" FontWeight="SemiBold" Foreground="#2C3547" Margin="0,0,0,20"/>
 
-            <!-- Scanning section -->
+            <!-- Network Scanning -->
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
                 <StackPanel>
-                    <TextBlock Text="NETWORK SCANNING" Style="{StaticResource SectionHeaderStyle}"
-                               FontSize="10.5" Foreground="#888" Margin="0,0,0,14"/>
+                    <TextBlock Text="NETWORK SCANNING" FontSize="10.5" FontWeight="Bold"
+                               Foreground="#888" Margin="0,0,0,14"/>
 
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Max scan threads" FontSize="12.5" Foreground="#333"/>
-                            <TextBlock Text="Parallel WMI connections during inventory scan" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                            <TextBlock Text="Parallel WMI connections" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <Slider Minimum="1" Maximum="50" Value="20" Width="160" HorizontalAlignment="Left"
+                            <Slider Minimum="1" Maximum="50" Value="{Binding MaxScanThreads}"
+                                    Width="160" HorizontalAlignment="Left"
                                     TickFrequency="5" IsSnapToTickEnabled="True"/>
-                            <TextBlock Text="20 threads" FontSize="11" Foreground="#555" Margin="0,3,0,0"/>
+                            <TextBlock FontSize="11" Foreground="#555" Margin="0,3,0,0">
+                                <Run Text="{Binding MaxScanThreads}"/><Run Text=" threads"/>
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Ping timeout (ms)" FontSize="12.5" Foreground="#333"/>
-                            <TextBlock Text="Per-host ping timeout before marking offline" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                            <TextBlock Text="Per-host timeout before marking offline" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
                         <TextBox Grid.Column="1" Width="100" Height="30" FontSize="12" Padding="8,4"
-                                 BorderBrush="#CCC" Text="1500" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                 BorderBrush="#CCC" HorizontalAlignment="Left" VerticalContentAlignment="Center"
+                                 Text="{Binding PingTimeoutMs}"/>
                     </Grid>
 
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="AD computer filter (LDAP)" FontSize="12.5" Foreground="#333"/>
-                            <TextBlock Text="Filter applied when querying Active Directory" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                            <TextBlock Text="Applied when querying Active Directory" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
-                        <TextBox Grid.Column="1" Height="30" FontSize="11" FontFamily="Consolas" Padding="8,4"
-                                 BorderBrush="#CCC" VerticalContentAlignment="Center"
-                                 Text="(&amp;(objectCategory=computer)(operatingSystem=Windows*))"/>
+                        <TextBox Grid.Column="1" Height="30" FontSize="11" FontFamily="Consolas"
+                                 Padding="8,4" BorderBrush="#CCC" VerticalContentAlignment="Center"
+                                 Text="{Binding AdFilter, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- Deployment section -->
+            <!-- Deployment -->
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
                 <StackPanel>
-                    <TextBlock Text="DEPLOYMENT" Style="{StaticResource SectionHeaderStyle}"
-                               FontSize="10.5" Foreground="#888" Margin="0,0,0,14"/>
+                    <TextBlock Text="DEPLOYMENT" FontSize="10.5" FontWeight="Bold"
+                               Foreground="#888" Margin="0,0,0,14"/>
 
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Max deploy threads" FontSize="12.5" Foreground="#333"/>
-                            <TextBlock Text="Parallel simultaneous deployments" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                            <TextBlock Text="Simultaneous deployments" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <Slider Minimum="1" Maximum="20" Value="10" Width="160" HorizontalAlignment="Left"
+                            <Slider Minimum="1" Maximum="20" Value="{Binding MaxDeployThreads}"
+                                    Width="160" HorizontalAlignment="Left"
                                     TickFrequency="1" IsSnapToTickEnabled="True"/>
-                            <TextBlock Text="10 threads" FontSize="11" Foreground="#555" Margin="0,3,0,0"/>
+                            <TextBlock FontSize="11" Foreground="#555" Margin="0,3,0,0">
+                                <Run Text="{Binding MaxDeployThreads}"/><Run Text=" threads"/>
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Deploy timeout (seconds)" FontSize="12.5" Foreground="#333"/>
-                            <TextBlock Text="Max wait per installer before marking failed" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                            <TextBlock Text="Max wait per installer" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
                         <TextBox Grid.Column="1" Width="100" Height="30" FontSize="12" Padding="8,4"
-                                 BorderBrush="#CCC" Text="300" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                 BorderBrush="#CCC" HorizontalAlignment="Left" VerticalContentAlignment="Center"
+                                 Text="{Binding DeployTimeoutSec}"/>
                     </Grid>
 
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Default silent args" FontSize="12.5" Foreground="#333"/>
-                            <TextBlock Text="Pre-filled when adding a new package" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                            <TextBlock Text="Pre-filled when adding a package" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
-                        <TextBox Grid.Column="1" Height="30" Width="220" FontSize="12" FontFamily="Consolas"
-                                 Padding="8,4" BorderBrush="#CCC" HorizontalAlignment="Left"
-                                 VerticalContentAlignment="Center" Text="/qn /norestart"/>
+                        <TextBox Grid.Column="1" Width="220" Height="30" FontSize="12" FontFamily="Consolas"
+                                 Padding="8,4" BorderBrush="#CCC" HorizontalAlignment="Left" VerticalContentAlignment="Center"
+                                 Text="{Binding DefaultSilentArgs, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- Database section -->
+            <!-- Database -->
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
                 <StackPanel>
-                    <TextBlock Text="DATABASE" Style="{StaticResource SectionHeaderStyle}"
-                               FontSize="10.5" Foreground="#888" Margin="0,0,0,14"/>
-
+                    <TextBlock Text="DATABASE" FontSize="10.5" FontWeight="Bold"
+                               Foreground="#888" Margin="0,0,0,14"/>
                     <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Database file path" FontSize="12.5" Foreground="#333"/>
                             <TextBlock Text="SQLite database location" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Height="30" FontSize="11" Padding="8,4"
-                                         BorderBrush="#CCC" VerticalContentAlignment="Center"
-                                         Text="%APPDATA%\AutodeskSoftwareManager\manager.db"/>
-                                <Button Grid.Column="1" Content="Browse" Style="{StaticResource ToolbarButtonStyle}"
-                                        Margin="6,0,0,0" FontSize="11" Padding="8,4"/>
-                            </Grid>
-                        </StackPanel>
+                        <TextBox Grid.Column="1" Height="30" FontSize="11" Padding="8,4" BorderBrush="#CCC"
+                                 VerticalContentAlignment="Center" IsReadOnly="True"
+                                 Text="{Binding DbPath}"/>
                     </Grid>
-
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Open DB Folder" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0" FontSize="11"/>
-                        <Button Content="Backup DB" Style="{StaticResource ToolbarButtonStyle}" FontSize="11"/>
+                        <Button Content="Open DB Folder" Command="{Binding OpenDbFolderCommand}"
+                                Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0" FontSize="11"/>
+                        <Button Content="Backup DB" Command="{Binding BackupDbCommand}"
+                                Style="{StaticResource ToolbarButtonStyle}" FontSize="11"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- About section -->
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+            <!-- About -->
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="ABOUT" Style="{StaticResource SectionHeaderStyle}"
-                               FontSize="10.5" Foreground="#888" Margin="0,0,0,14"/>
+                    <TextBlock Text="ABOUT" FontSize="10.5" FontWeight="Bold" Foreground="#888" Margin="0,0,0,14"/>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -163,19 +136,19 @@
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Application:" FontSize="12" Foreground="#888"/>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="Autodesk Software Manager" FontSize="12"/>
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Version:" FontSize="12" Foreground="#888" Margin="0,6,0,0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="0.1.0.0" FontSize="12" Margin="0,6,0,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding AppVersion}" FontSize="12" Margin="0,6,0,0"/>
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Framework:" FontSize="12" Foreground="#888" Margin="0,6,0,0"/>
                         <TextBlock Grid.Row="2" Grid.Column="1" Text=".NET 9 / WPF / SQLite" FontSize="12" Margin="0,6,0,0"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- Save button -->
             <StackPanel Orientation="Horizontal">
-                <Button Content="💾  Save Settings" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="Reset to Defaults" Style="{StaticResource ToolbarButtonStyle}"/>
+                <Button Content="💾  Save Settings" Command="{Binding SaveCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="Reset to Defaults" Command="{Binding ResetDefaultsCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}"/>
             </StackPanel>
-
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -11,8 +11,12 @@
         <!-- Toolbar -->
         <Border Grid.Row="0" Background="White" Padding="14,10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
-                <Button Content="📊  Export CSV" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="🔄  Refresh" Style="{StaticResource ToolbarButtonStyle}"/>
+                <Button Content="📊  Export CSV"
+                        Command="{Binding ExportCsvCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="🔄  Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}"/>
             </StackPanel>
         </Border>
 
@@ -21,27 +25,31 @@
                 CornerRadius="6" BorderBrush="#E8E8E8" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#555" FontSize="12"/>
-                <ComboBox Height="28" FontSize="12" MinWidth="160" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All Packages</ComboBoxItem>
-                    <ComboBoxItem>AutoCAD 2025 Update 1</ComboBoxItem>
-                    <ComboBoxItem>Revit 2025 Update 2</ComboBoxItem>
+                <TextBox Width="160" Height="28" FontSize="12" Padding="6,0"
+                         VerticalContentAlignment="Center" BorderBrush="#CCC" Margin="0,0,10,0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="200" Margin="0,0,10,0"
+                          ItemsSource="{Binding PackageNames}"
+                          SelectedItem="{Binding SelectedPackage}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="120" Margin="0,0,10,0"
+                          SelectedValue="{Binding SelectedResult}">
+                    <ComboBoxItem Content="All"     IsSelected="True"/>
+                    <ComboBoxItem Content="Success"/>
+                    <ComboBoxItem Content="Failed"/>
                 </ComboBox>
-                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All Results</ComboBoxItem>
-                    <ComboBoxItem>Success only</ComboBoxItem>
-                    <ComboBoxItem>Failed only</ComboBoxItem>
-                </ComboBox>
-                <TextBox Width="160" Height="28" FontSize="12" Padding="6,0" VerticalContentAlignment="Center"
-                         BorderBrush="#CCC" Margin="0,0,10,0" Text=""/>
                 <TextBlock Text="From:" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Foreground="#555"/>
-                <DatePicker Height="28" FontSize="11" Width="120" Margin="0,0,10,0"/>
+                <DatePicker Height="28" Width="120" Margin="0,0,10,0"
+                            SelectedDate="{Binding DateFrom}"/>
                 <TextBlock Text="To:" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Foreground="#555"/>
-                <DatePicker Height="28" FontSize="11" Width="120"/>
+                <DatePicker Height="28" Width="120"
+                            SelectedDate="{Binding DateTo}"/>
             </StackPanel>
         </Border>
 
-        <!-- History DataGrid -->
-        <DataGrid x:Name="HistoryGrid" Grid.Row="2" Style="{StaticResource MainGridStyle}" Margin="14,8,14,14">
+        <!-- History grid -->
+        <DataGrid Grid.Row="2" Style="{StaticResource MainGridStyle}"
+                  Margin="14,8,14,14"
+                  ItemsSource="{Binding HistoryView}">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
@@ -52,24 +60,25 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Started" Width="140" Binding="{Binding Started}"/>
-                <DataGridTextColumn Header="Computer" Width="150" Binding="{Binding Computer}"/>
-                <DataGridTextColumn Header="OU" Width="120" Binding="{Binding OU}"/>
-                <DataGridTextColumn Header="Package" Width="200" Binding="{Binding Package}"/>
+                <DataGridTextColumn Header="Started"        Width="140" Binding="{Binding StartedAtDisplay}"/>
+                <DataGridTextColumn Header="Computer"       Width="150" Binding="{Binding ComputerName}"/>
+                <DataGridTextColumn Header="OU"             Width="110" Binding="{Binding ComputerOU}"/>
+                <DataGridTextColumn Header="Package"        Width="200" Binding="{Binding PackageName}"/>
                 <DataGridTextColumn Header="Target Version" Width="115" Binding="{Binding TargetVersion}"/>
-                <DataGridTemplateColumn Header="Result" Width="100">
+                <DataGridTemplateColumn Header="Result" Width="95">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Border CornerRadius="10" Padding="7,2" HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" Margin="4,0"
+                            <Border CornerRadius="10" Padding="7,2" Margin="4,0"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
                                     Background="{Binding ResultColor}">
-                                <TextBlock Text="{Binding ResultText}" Foreground="White" FontSize="10.5" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding ResultText}" Foreground="White"
+                                           FontSize="10.5" FontWeight="SemiBold"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Duration" Width="80" Binding="{Binding Duration}"/>
-                <DataGridTextColumn Header="Message" Width="*" Binding="{Binding Message}"/>
+                <DataGridTextColumn Header="Duration" Width="80"  Binding="{Binding DurationDisplay}"/>
+                <DataGridTextColumn Header="Message"  Width="*"   Binding="{Binding Message}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

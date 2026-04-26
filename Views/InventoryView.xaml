@@ -12,44 +12,46 @@
         <!-- Toolbar -->
         <Border Grid.Row="0" Background="White" Padding="14,10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
-                <Button Content="📥  Scan Selected" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="📥  Scan All Online" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="📥  Scan Selected (Computers tab)"
+                        Command="{Binding ScanSelectedCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="📥  Scan All Online"
+                        Command="{Binding ScanAllOnlineCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
                 <Separator Width="1" Background="#DDD" Margin="6,2"/>
-                <Button Content="📊  Export CSV" Style="{StaticResource ToolbarButtonStyle}" Margin="4,0,8,0"/>
-                <Button Content="🔄  Refresh" Style="{StaticResource ToolbarButtonStyle}"/>
+                <Button Content="📊  Export CSV"
+                        Command="{Binding ExportCsvCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="4,0,8,0"/>
+                <Button Content="🔄  Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}"/>
             </StackPanel>
         </Border>
 
         <!-- Stat cards -->
-        <UniformGrid Grid.Row="1" Columns="5" Margin="14,12,14,4">
+        <UniformGrid Grid.Row="1" Columns="4" Margin="14,12,14,4">
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="1,847" Style="{StaticResource StatNumberStyle}"/>
-                    <TextBlock Text="Total Installations" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding TotalCount}"         Style="{StaticResource StatNumberStyle}"/>
+                    <TextBlock Text="Total Installations"          Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="18" Style="{StaticResource StatNumberStyle}" Foreground="#3A4A6B"/>
-                    <TextBlock Text="Distinct Products" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding ProductFamilyCount}" Style="{StaticResource StatNumberStyle}" Foreground="#3A4A6B"/>
+                    <TextBlock Text="Distinct Products"            Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="54" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OutdatedBrush}"/>
-                    <TextBlock Text="Outdated" Style="{StaticResource StatLabelStyle}"/>
-                </StackPanel>
-            </Border>
-            <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
-                <StackPanel>
-                    <TextBlock Text="1,793" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource UpToDateBrush}"/>
-                    <TextBlock Text="Up to Date" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding OutdatedCount}"      Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OutdatedBrush}"/>
+                    <TextBlock Text="Outdated"                     Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="33" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource UnknownBrush}"/>
-                    <TextBlock Text="Unknown Version" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding UpToDateCount}"      Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource UpToDateBrush}"/>
+                    <TextBlock Text="Up to Date"                   Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
@@ -59,43 +61,28 @@
                 CornerRadius="6" BorderBrush="#E8E8E8" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#555" FontSize="12"/>
-                <TextBox Width="180" Height="28" FontSize="12" Padding="6,0" VerticalContentAlignment="Center"
-                         BorderBrush="#CCC" Margin="0,0,10,0"/>
-                <ComboBox Height="28" FontSize="12" MinWidth="160" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All Products</ComboBoxItem>
-                    <ComboBoxItem>AutoCAD</ComboBoxItem>
-                    <ComboBoxItem>Revit</ComboBoxItem>
-                    <ComboBoxItem>Inventor</ComboBoxItem>
-                    <ComboBoxItem>Civil 3D</ComboBoxItem>
-                    <ComboBoxItem>3ds Max</ComboBoxItem>
-                    <ComboBoxItem>Maya</ComboBoxItem>
-                    <ComboBoxItem>Navisworks</ComboBoxItem>
-                    <ComboBoxItem>Fusion 360</ComboBoxItem>
-                </ComboBox>
-                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All Years</ComboBoxItem>
-                    <ComboBoxItem>2026</ComboBoxItem>
-                    <ComboBoxItem>2025</ComboBoxItem>
-                    <ComboBoxItem>2024</ComboBoxItem>
-                    <ComboBoxItem>2023</ComboBoxItem>
-                </ComboBox>
-                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All Status</ComboBoxItem>
-                    <ComboBoxItem>Outdated only</ComboBoxItem>
-                    <ComboBoxItem>Up to date</ComboBoxItem>
-                    <ComboBoxItem>Unknown version</ComboBoxItem>
-                </ComboBox>
-                <ComboBox Height="28" FontSize="12" MinWidth="130" SelectedIndex="0">
-                    <ComboBoxItem>All OUs</ComboBoxItem>
-                    <ComboBoxItem>ENGINEERING</ComboBoxItem>
-                    <ComboBoxItem>ARCHITECTURE</ComboBoxItem>
-                    <ComboBoxItem>DESIGN</ComboBoxItem>
+                <TextBox Width="180" Height="28" FontSize="12" Padding="6,0"
+                         VerticalContentAlignment="Center" BorderBrush="#CCC" Margin="0,0,10,0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="160" Margin="0,0,10,0"
+                          ItemsSource="{Binding FamilyList}"
+                          SelectedItem="{Binding SelectedFamily}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0"
+                          ItemsSource="{Binding OUList}"
+                          SelectedItem="{Binding SelectedOU}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0"
+                          SelectedValue="{Binding SelectedStatus}">
+                    <ComboBoxItem Content="All"         IsSelected="True"/>
+                    <ComboBoxItem Content="Outdated"/>
+                    <ComboBoxItem Content="Up to Date"/>
                 </ComboBox>
             </StackPanel>
         </Border>
 
-        <!-- Inventory DataGrid -->
-        <DataGrid x:Name="InventoryGrid" Grid.Row="3" Style="{StaticResource MainGridStyle}" Margin="14,8,14,14">
+        <!-- Inventory grid -->
+        <DataGrid Grid.Row="3" Style="{StaticResource MainGridStyle}"
+                  Margin="14,8,14,14"
+                  ItemsSource="{Binding ProductView}">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
@@ -106,25 +93,26 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Computer" Width="150" Binding="{Binding Computer}"/>
-                <DataGridTextColumn Header="OU" Width="120" Binding="{Binding OU}"/>
-                <DataGridTextColumn Header="Product" Width="175" Binding="{Binding Product}"/>
-                <DataGridTextColumn Header="Year" Width="55" Binding="{Binding Year}"/>
-                <DataGridTextColumn Header="Installed Version" Width="130" Binding="{Binding InstalledVersion}"/>
-                <DataGridTextColumn Header="Latest Version" Width="130" Binding="{Binding LatestVersion}"/>
-                <DataGridTemplateColumn Header="Status" Width="110">
+                <DataGridTextColumn Header="Computer"          Width="160" Binding="{Binding ComputerName}"/>
+                <DataGridTextColumn Header="OU"                Width="120" Binding="{Binding ComputerOU}"/>
+                <DataGridTextColumn Header="Product"           Width="200" Binding="{Binding DisplayName}"/>
+                <DataGridTextColumn Header="Family"            Width="130" Binding="{Binding ProductFamily}"/>
+                <DataGridTextColumn Header="Installed Version" Width="130" Binding="{Binding DisplayVersion}"/>
+                <DataGridTextColumn Header="Latest Version"    Width="120" Binding="{Binding LatestVersion}"/>
+                <DataGridTemplateColumn Header="Status" Width="105">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Border CornerRadius="10" Padding="7,2" HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" Margin="4,0"
+                            <Border CornerRadius="10" Padding="7,2" Margin="4,0"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
                                     Background="{Binding StatusColor}">
-                                <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10.5" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding StatusText}" Foreground="White"
+                                           FontSize="10.5" FontWeight="SemiBold"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Install Date" Width="100" Binding="{Binding InstallDate}"/>
-                <DataGridTextColumn Header="Scanned" Width="135" Binding="{Binding ScannedAt}"/>
+                <DataGridTextColumn Header="Scanned"      Width="*"   Binding="{Binding ScannedAtDisplay}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -7,17 +7,28 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
         <Border Grid.Row="0" Background="White" Padding="14,10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
-                <Button Content="🔍  Scan Network" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="➕  Add Computer" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="🔄  Refresh Status" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="🔍  Scan Network"
+                        Command="{Binding ScanNetworkCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="➕  Add Computer"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"
+                        Click="AddComputer_Click"/>
+                <Button Content="🔄  Refresh"
+                        Command="{Binding RefreshStatusCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
                 <Separator Width="1" Background="#DDD" Margin="6,2"/>
-                <Button Content="📥  Scan Inventory (Selected)" Style="{StaticResource ToolbarButtonStyle}" Margin="4,0,8,0"/>
-                <Button Content="🗑  Remove" Style="{StaticResource ToolbarButtonStyle}" IsEnabled="False"/>
+                <Button Content="📥  Scan Inventory (Selected)"
+                        Command="{Binding ScanInventoryCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="4,0,8,0"/>
+                <Button Content="🗑  Remove Selected"
+                        Command="{Binding RemoveSelectedCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}"/>
             </StackPanel>
         </Border>
 
@@ -25,32 +36,32 @@
         <UniformGrid Grid.Row="1" Columns="5" Margin="14,12,14,4">
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="324" Style="{StaticResource StatNumberStyle}"/>
-                    <TextBlock Text="Total Computers" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding TotalCount}"   Style="{StaticResource StatNumberStyle}"/>
+                    <TextBlock Text="Total Computers"        Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="287" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OnlineBrush}"/>
-                    <TextBlock Text="Online" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding OnlineCount}"  Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OnlineBrush}"/>
+                    <TextBlock Text="Online"                 Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="37" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OfflineBrush}"/>
-                    <TextBlock Text="Offline" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding OfflineCount}" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OfflineBrush}"/>
+                    <TextBlock Text="Offline"                Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="291" Style="{StaticResource StatNumberStyle}" Foreground="#3A4A6B"/>
-                    <TextBlock Text="Inventory Scanned" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding ScannedCount}" Style="{StaticResource StatNumberStyle}" Foreground="#3A4A6B"/>
+                    <TextBlock Text="Inventory Scanned"      Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="54" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OutdatedBrush}"/>
-                    <TextBlock Text="Outdated Products" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding OutdatedCount}" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OutdatedBrush}"/>
+                    <TextBlock Text="Outdated Products"       Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
@@ -60,53 +71,65 @@
                 CornerRadius="6" BorderBrush="#E8E8E8" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#555" FontSize="12"/>
-                <TextBox Width="200" Height="28" FontSize="12" Padding="6,0" VerticalContentAlignment="Center"
-                         BorderBrush="#CCC" Margin="0,0,10,0" Text=""/>
-                <ComboBox Height="28" FontSize="12" MinWidth="140" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All OUs</ComboBoxItem>
-                    <ComboBoxItem>ENGINEERING</ComboBoxItem>
-                    <ComboBoxItem>ARCHITECTURE</ComboBoxItem>
-                    <ComboBoxItem>DESIGN</ComboBoxItem>
-                    <ComboBoxItem>IT</ComboBoxItem>
+                <TextBox Width="200" Height="28" FontSize="12" Padding="6,0"
+                         VerticalContentAlignment="Center" BorderBrush="#CCC" Margin="0,0,10,0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="140" Margin="0,0,10,0"
+                          ItemsSource="{Binding OUList}"
+                          SelectedItem="{Binding SelectedOU}"/>
+                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0"
+                          SelectedValue="{Binding SelectedStatus}">
+                    <ComboBoxItem Content="All"     IsSelected="True"/>
+                    <ComboBoxItem Content="Online"/>
+                    <ComboBoxItem Content="Offline"/>
                 </ComboBox>
-                <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0" SelectedIndex="0">
-                    <ComboBoxItem>All Status</ComboBoxItem>
-                    <ComboBoxItem>Online only</ComboBoxItem>
-                    <ComboBoxItem>Offline only</ComboBoxItem>
-                    <ComboBoxItem>Never scanned</ComboBoxItem>
-                </ComboBox>
-                <CheckBox Content="Has Autodesk SW" VerticalAlignment="Center" FontSize="12" Foreground="#555" Margin="0,0,10,0"/>
-                <CheckBox Content="Has outdated SW" VerticalAlignment="Center" FontSize="12" Foreground="#555"/>
+                <CheckBox Content="Has Autodesk SW" VerticalAlignment="Center" FontSize="12"
+                          Foreground="#555" Margin="0,0,10,0"
+                          IsChecked="{Binding HasAutodesk}"/>
+                <CheckBox Content="Has outdated SW" VerticalAlignment="Center" FontSize="12"
+                          Foreground="#555"
+                          IsChecked="{Binding HasOutdated}"/>
             </StackPanel>
         </Border>
 
-        <!-- Computer DataGrid -->
-        <DataGrid x:Name="ComputerGrid" Grid.Row="3" Style="{StaticResource MainGridStyle}" Margin="14,8,14,14">
+        <!-- Computer grid -->
+        <DataGrid Grid.Row="3" Style="{StaticResource MainGridStyle}"
+                  Margin="14,8,14,0"
+                  ItemsSource="{Binding ComputerView}">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasOutdated}" Value="True">
+                            <Setter Property="Background" Value="#FFF8F0"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Width="36" Header=""/>
-                <DataGridTextColumn Header="Computer Name" Width="170" Binding="{Binding Name}"/>
-                <DataGridTextColumn Header="OU / Location" Width="150" Binding="{Binding OU}"/>
-                <DataGridTextColumn Header="Description" Width="190" Binding="{Binding Description}"/>
-                <DataGridTemplateColumn Header="Status" Width="85">
+                <DataGridCheckBoxColumn Width="36" Header=""
+                                        Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="Computer Name"   Width="170" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="OU / Location"   Width="150" Binding="{Binding OU}"/>
+                <DataGridTextColumn Header="Description"     Width="190" Binding="{Binding Description}"/>
+                <DataGridTemplateColumn Header="Status" Width="90">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Border CornerRadius="10" Padding="7,2" HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" Margin="4,0"
+                            <Border CornerRadius="10" Padding="7,2" Margin="4,0"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
                                     Background="{Binding StatusColor}">
-                                <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10.5" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding StatusText}" Foreground="White"
+                                           FontSize="10.5" FontWeight="SemiBold"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Logged-in User" Width="130" Binding="{Binding LoggedInUser}"/>
-                <DataGridTextColumn Header="Products" Width="72" Binding="{Binding ProductCount}">
+                <DataGridTextColumn Header="Logged-in User"  Width="130" Binding="{Binding LoggedInUser}"/>
+                <DataGridTextColumn Header="Products" Width="68" Binding="{Binding ProductCount}">
                     <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                        </Style>
+                        <Style TargetType="TextBlock"><Setter Property="HorizontalAlignment" Value="Center"/></Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Outdated" Width="72" Binding="{Binding OutdatedCount}">
+                <DataGridTextColumn Header="Outdated" Width="68" Binding="{Binding OutdatedDisplay}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -115,9 +138,30 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Last Scan" Width="135" Binding="{Binding LastScan}"/>
-                <DataGridTextColumn Header="Last Seen" Width="135" Binding="{Binding LastSeen}"/>
+                <DataGridTextColumn Header="Last Scan"     Width="140" Binding="{Binding LastScanDisplay}"/>
+                <DataGridTextColumn Header="Last Seen"     Width="140" Binding="{Binding LastSeenDisplay}"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <!-- Progress bar (shown while busy) -->
+        <Border Grid.Row="4" Padding="14,8" Background="White"
+                BorderBrush="#E0E0E0" BorderThickness="0,1,0,0"
+                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{Binding ProgressText}" FontSize="12" Foreground="#555" Margin="0,0,0,5"/>
+                    <ProgressBar Height="6" Value="{Binding ProgressValue}" Maximum="100"
+                                 Background="#E0E0E0" Foreground="{StaticResource AutodeskRedBrush}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Margin="14,0,0,0" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

@@ -10,9 +10,15 @@
         <!-- Toolbar -->
         <Border Grid.Row="0" Background="White" Padding="14,10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
-                <Button Content="➕  Add Package" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Content="✏  Edit" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0" IsEnabled="False"/>
-                <Button Content="🗑  Delete" Style="{StaticResource ToolbarButtonStyle}" IsEnabled="False"/>
+                <Button Content="➕  Add Package"
+                        Command="{Binding NewPackageCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="✏  Edit"
+                        Command="{Binding EditPackageCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="🗑  Delete"
+                        Command="{Binding DeletePackageCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}"/>
             </StackPanel>
         </Border>
 
@@ -24,20 +30,22 @@
             </Grid.ColumnDefinitions>
 
             <!-- Package grid -->
-            <DataGrid x:Name="PackageGrid" Grid.Column="0" Style="{StaticResource MainGridStyle}">
+            <DataGrid Grid.Column="0" Style="{StaticResource MainGridStyle}"
+                      ItemsSource="{Binding Packages}"
+                      SelectedItem="{Binding SelectedPackage}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Package Name" Width="200" Binding="{Binding Name}"/>
-                    <DataGridTextColumn Header="Product Family" Width="130" Binding="{Binding Family}"/>
-                    <DataGridTextColumn Header="Target Version" Width="120" Binding="{Binding Version}"/>
-                    <DataGridTextColumn Header="Silent Args" Width="160" Binding="{Binding Args}">
+                    <DataGridTextColumn Header="Package Name"    Width="200" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Product Family"  Width="130" Binding="{Binding ProductFamily}"/>
+                    <DataGridTextColumn Header="Target Version"  Width="115" Binding="{Binding TargetVersion}"/>
+                    <DataGridTextColumn Header="Silent Args"     Width="155" Binding="{Binding SilentArgs}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontFamily" Value="Consolas"/>
-                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontSize"   Value="11"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Active" Width="65">
+                    <DataGridTemplateColumn Header="Active" Width="58">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsActive}" HorizontalAlignment="Center"
@@ -45,36 +53,31 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Created" Width="*" Binding="{Binding Created}"/>
+                    <DataGridTextColumn Header="Created" Width="*" Binding="{Binding CreatedAt}"/>
                 </DataGrid.Columns>
             </DataGrid>
 
-            <!-- Add/Edit form panel -->
+            <!-- Add/Edit form -->
             <Border Grid.Column="2" Background="White" CornerRadius="6" Padding="16"
-                    BorderBrush="#E0E0E0" BorderThickness="1">
+                    BorderBrush="#E0E0E0" BorderThickness="1"
+                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                 <StackPanel>
-                    <TextBlock Text="ADD PACKAGE" FontSize="10.5" FontWeight="Bold" Foreground="#888"
-                               Margin="0,0,0,14"/>
+                    <TextBlock Text="{Binding FormTitle}" FontSize="10.5" FontWeight="Bold"
+                               Foreground="#888" Margin="0,0,0,14"/>
 
                     <TextBlock Text="Package Name" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
-                    <TextBox Height="30" FontSize="12" Padding="8,4" BorderBrush="#CCC"
-                             Text="AutoCAD 2025 Update 1" Margin="0,0,0,12"/>
+                    <TextBox Height="30" FontSize="12" Padding="8,4" BorderBrush="#CCC" Margin="0,0,0,12"
+                             Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Product Family" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
-                    <ComboBox Height="30" FontSize="12" Margin="0,0,0,12" SelectedIndex="0">
-                        <ComboBoxItem>AutoCAD</ComboBoxItem>
-                        <ComboBoxItem>Revit</ComboBoxItem>
-                        <ComboBoxItem>Civil 3D</ComboBoxItem>
-                        <ComboBoxItem>Inventor</ComboBoxItem>
-                        <ComboBoxItem>3ds Max</ComboBoxItem>
-                        <ComboBoxItem>Maya</ComboBoxItem>
-                        <ComboBoxItem>Navisworks</ComboBoxItem>
-                        <ComboBoxItem>Other</ComboBoxItem>
-                    </ComboBox>
+                    <ComboBox Height="30" FontSize="12" Margin="0,0,0,12"
+                              ItemsSource="{x:Static local:PackagesViewModel.ProductFamilies}"
+                              SelectedItem="{Binding FormFamily}"
+                              xmlns:local="clr-namespace:AutodeskSoftwareManager.ViewModels"/>
 
                     <TextBlock Text="Target Version" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
-                    <TextBox Height="30" FontSize="12" Padding="8,4" BorderBrush="#CCC"
-                             Text="25.1.0.0" Margin="0,0,0,12"/>
+                    <TextBox Height="30" FontSize="12" Padding="8,4" BorderBrush="#CCC" Margin="0,0,0,12"
+                             Text="{Binding FormVersion, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Installer Path" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
                     <Grid Margin="0,0,0,12">
@@ -83,26 +86,35 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Height="30" FontSize="11" Padding="8,4" BorderBrush="#CCC"
-                                 Text="\\server\installers\AutoCAD2025_U1.exe" VerticalContentAlignment="Center"/>
-                        <Button Grid.Column="1" Content="Browse" Style="{StaticResource ToolbarButtonStyle}"
+                                 Text="{Binding FormInstallerPath, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center"/>
+                        <Button Grid.Column="1" Content="Browse"
+                                Command="{Binding BrowseInstallerCommand}"
+                                Style="{StaticResource ToolbarButtonStyle}"
                                 Margin="6,0,0,0" FontSize="11" Padding="8,4"/>
                     </Grid>
 
                     <TextBlock Text="Silent Install Args" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
-                    <TextBox Height="30" FontSize="12" FontFamily="Consolas" Padding="8,4" BorderBrush="#CCC"
-                             Text="/qn /norestart" Margin="0,0,0,12"/>
+                    <TextBox Height="30" FontSize="12" FontFamily="Consolas" Padding="8,4"
+                             BorderBrush="#CCC" Margin="0,0,0,12"
+                             Text="{Binding FormSilentArgs, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Notes" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
-                    <TextBox Height="64" FontSize="12" Padding="8,6" BorderBrush="#CCC" TextWrapping="Wrap"
-                             AcceptsReturn="True" Margin="0,0,0,16"
-                             Text="Requires ADLS 16.3+ to be installed first."/>
+                    <TextBox Height="64" FontSize="12" Padding="8,6" BorderBrush="#CCC"
+                             TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,12"
+                             Text="{Binding FormNotes, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <CheckBox Content="Active (available for deployment)" IsChecked="True"
-                              FontSize="12" Foreground="#555" Margin="0,0,0,16"/>
+                    <CheckBox Content="Active (available for deployment)" FontSize="12"
+                              Foreground="#555" Margin="0,0,0,16"
+                              IsChecked="{Binding FormIsActive}"/>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="💾  Save Package" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
-                        <Button Content="Cancel" Style="{StaticResource ToolbarButtonStyle}"/>
+                        <Button Content="💾  Save"
+                                Command="{Binding SavePackageCommand}"
+                                Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                        <Button Content="Cancel"
+                                Command="{Binding CancelEditCommand}"
+                                Style="{StaticResource ToolbarButtonStyle}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
