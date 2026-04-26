@@ -24,6 +24,7 @@ public static class Database
         conn.Execute("PRAGMA journal_mode=WAL;");
         conn.Execute("PRAGMA foreign_keys=ON;");
         ApplySchema(conn);
+        ApplyMigrations(conn);
         SeedCatalog(conn);
     }
 
@@ -107,6 +108,13 @@ public static class Database
                 value TEXT NOT NULL DEFAULT ''
             );
         ");
+    }
+
+    private static void ApplyMigrations(SqliteConnection conn)
+    {
+        // Safe to run every startup — each ALTER TABLE is a no-op if the column exists
+        try { conn.Execute("ALTER TABLE computers ADD COLUMN is_hidden INTEGER NOT NULL DEFAULT 0;"); }
+        catch { /* column already exists */ }
     }
 
     private class BoolTypeHandler : SqlMapper.TypeHandler<bool>

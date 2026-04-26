@@ -26,6 +26,10 @@
                 <Button Content="📥  Scan Inventory (Selected)"
                         Command="{Binding ScanInventoryCommand}"
                         Style="{StaticResource ToolbarButtonStyle}" Margin="4,0,8,0"/>
+                <Separator Width="1" Background="#DDD" Margin="6,2"/>
+                <Button Content="👁  Hide Selected"
+                        Command="{Binding HideSelectedCommand}"
+                        Style="{StaticResource ToolbarButtonStyle}" Margin="4,0,8,0"/>
                 <Button Content="🗑  Remove Selected"
                         Command="{Binding RemoveSelectedCommand}"
                         Style="{StaticResource ToolbarButtonStyle}"/>
@@ -36,26 +40,26 @@
         <UniformGrid Grid.Row="1" Columns="5" Margin="14,12,14,4">
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="{Binding TotalCount}"   Style="{StaticResource StatNumberStyle}"/>
-                    <TextBlock Text="Total Computers"        Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding TotalCount}"    Style="{StaticResource StatNumberStyle}"/>
+                    <TextBlock Text="Total Computers"         Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="{Binding OnlineCount}"  Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OnlineBrush}"/>
-                    <TextBlock Text="Online"                 Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding OnlineCount}"   Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OnlineBrush}"/>
+                    <TextBlock Text="Online"                  Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="{Binding OfflineCount}" Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OfflineBrush}"/>
-                    <TextBlock Text="Offline"                Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding OfflineCount}"  Style="{StaticResource StatNumberStyle}" Foreground="{StaticResource OfflineBrush}"/>
+                    <TextBlock Text="Offline"                 Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="{Binding ScannedCount}" Style="{StaticResource StatNumberStyle}" Foreground="#3A4A6B"/>
-                    <TextBlock Text="Inventory Scanned"      Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding ScannedCount}"  Style="{StaticResource StatNumberStyle}" Foreground="#3A4A6B"/>
+                    <TextBlock Text="Inventory Scanned"       Style="{StaticResource StatLabelStyle}"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource StatCardStyle}">
@@ -74,9 +78,6 @@
                 <TextBox Width="200" Height="28" FontSize="12" Padding="6,0"
                          VerticalContentAlignment="Center" BorderBrush="#CCC" Margin="0,0,10,0"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-                <ComboBox Height="28" FontSize="12" MinWidth="140" Margin="0,0,10,0"
-                          ItemsSource="{Binding OUList}"
-                          SelectedItem="{Binding SelectedOU}"/>
                 <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0"
                           SelectedValue="{Binding SelectedStatus}" SelectedValuePath="Content">
                     <ComboBoxItem Content="All"     IsSelected="True"/>
@@ -87,61 +88,185 @@
                           Foreground="#555" Margin="0,0,10,0"
                           IsChecked="{Binding HasAutodesk}"/>
                 <CheckBox Content="Has outdated SW" VerticalAlignment="Center" FontSize="12"
-                          Foreground="#555"
+                          Foreground="#555" Margin="0,0,10,0"
                           IsChecked="{Binding HasOutdated}"/>
+                <CheckBox Content="Show hidden" VerticalAlignment="Center" FontSize="12"
+                          Foreground="#888"
+                          IsChecked="{Binding ShowHidden}"/>
             </StackPanel>
         </Border>
 
-        <!-- Computer grid -->
-        <DataGrid Grid.Row="3" Style="{StaticResource MainGridStyle}"
-                  Margin="14,8,14,0"
-                  ItemsSource="{Binding ComputerView}">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasOutdated}" Value="True">
-                            <Setter Property="Background" Value="#FFF8F0"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Width="36" Header=""
-                                        Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Header="Computer Name"   Width="170" Binding="{Binding Name}"/>
-                <DataGridTextColumn Header="OU / Location"   Width="150" Binding="{Binding OU}"/>
-                <DataGridTextColumn Header="Description"     Width="190" Binding="{Binding Description}"/>
-                <DataGridTemplateColumn Header="Status" Width="90">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Border CornerRadius="10" Padding="7,2" Margin="4,0"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Background="{Binding StatusColor}">
-                                <TextBlock Text="{Binding StatusText}" Foreground="White"
-                                           FontSize="10.5" FontWeight="SemiBold"/>
-                            </Border>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Logged-in User"  Width="130" Binding="{Binding LoggedInUser}"/>
-                <DataGridTextColumn Header="Products" Width="68" Binding="{Binding ProductCount}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock"><Setter Property="HorizontalAlignment" Value="Center"/></Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Outdated" Width="68" Binding="{Binding OutdatedDisplay}">
-                    <DataGridTextColumn.ElementStyle>
+        <!-- Main area: grid + detail sidebar -->
+        <Grid Grid.Row="3" Margin="14,8,14,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Computer grid -->
+            <DataGrid Grid.Column="0" Style="{StaticResource MainGridStyle}"
+                      ItemsSource="{Binding ComputerView}"
+                      SelectedItem="{Binding DetailComputer}">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasOutdated}" Value="True">
+                                <Setter Property="Background" Value="#FFF8F0"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsHidden}" Value="True">
+                                <Setter Property="Foreground" Value="#AAA"/>
+                                <Setter Property="FontStyle" Value="Italic"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="36" Header="" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Computer Name"   Width="160" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="OU / Location"   Width="140" Binding="{Binding OU}"/>
+                    <DataGridTextColumn Header="Description"     Width="170" Binding="{Binding Description}"/>
+                    <DataGridTemplateColumn Header="Status" Width="90" SortMemberPath="StatusText">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10" Padding="7,2" Margin="4,0"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Background="{Binding StatusColor}">
+                                    <TextBlock Text="{Binding StatusText}" Foreground="White"
+                                               FontSize="10.5" FontWeight="SemiBold"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Logged-in User"  Width="120" Binding="{Binding LoggedInUser}"/>
+                    <DataGridTextColumn Header="Products" Width="62" Binding="{Binding ProductCount}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="HorizontalAlignment" Value="Center"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Outdated" Width="62" Binding="{Binding OutdatedDisplay}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="{StaticResource OutdatedBrush}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Last Scan" Width="130" Binding="{Binding LastScanDisplay}"/>
+                    <DataGridTextColumn Header="Last Seen" Width="*"   Binding="{Binding LastSeenDisplay}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch"
+                          Background="#E0E0E0" ResizeBehavior="PreviousAndNext"/>
+
+            <!-- Detail sidebar -->
+            <Border Grid.Column="2" Background="White" CornerRadius="6"
+                    BorderBrush="#E0E0E0" BorderThickness="1">
+                <Grid>
+                <!-- Placeholder when nothing selected -->
+                <TextBlock Text="Click a computer to view installed software"
+                           Foreground="#AAA" FontSize="12" TextWrapping="Wrap"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Margin="16">
+                    <TextBlock.Style>
                         <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="Foreground" Value="{StaticResource OutdatedBrush}"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DetailComputer}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Last Scan"     Width="140" Binding="{Binding LastScanDisplay}"/>
-                <DataGridTextColumn Header="Last Seen"     Width="140" Binding="{Binding LastSeenDisplay}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <!-- Detail content when computer selected -->
+                <Grid Margin="12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DetailComputer}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Computer name + status -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="{Binding DetailComputer.Name}"
+                                   FontSize="14" FontWeight="SemiBold" Foreground="#2C3547"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding DetailComputer.OU}"
+                                   FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                        <TextBlock Text="{Binding DetailComputer.Description}"
+                                   FontSize="11" Foreground="#888" Margin="0,1,0,0"
+                                   TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <Border CornerRadius="10" Padding="7,2" Margin="0,0,6,0"
+                                    Background="{Binding DetailComputer.StatusColor}">
+                                <TextBlock Text="{Binding DetailComputer.StatusText}"
+                                           Foreground="White" FontSize="10.5" FontWeight="SemiBold"/>
+                            </Border>
+                            <TextBlock Text="{Binding DetailComputer.LoggedInUser}"
+                                       FontSize="11" Foreground="#555" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Section header -->
+                    <TextBlock Grid.Row="1" Text="INSTALLED AUTODESK SOFTWARE"
+                               FontSize="9.5" FontWeight="Bold" Foreground="#888" Margin="0,0,0,6"/>
+
+                    <!-- Software list -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding DetailSoftware}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="0,6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           FontSize="11.5" Foreground="#2C3547"
+                                                           TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding DisplayVersion}"
+                                                           FontSize="10.5" Foreground="#888" Margin="0,1,0,0"/>
+                                            </StackPanel>
+                                            <Border Grid.Column="1" CornerRadius="8" Padding="6,2"
+                                                    Margin="4,0,0,0" VerticalAlignment="Center"
+                                                    Background="{Binding StatusColor}">
+                                                <TextBlock Text="{Binding StatusText}"
+                                                           Foreground="White" FontSize="9.5" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+                </Grid>
+            </Border>
+        </Grid>
 
         <!-- Progress bar (shown while busy) -->
         <Border Grid.Row="4" Padding="14,8" Background="White"

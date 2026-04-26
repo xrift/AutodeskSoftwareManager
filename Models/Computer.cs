@@ -38,6 +38,7 @@ public partial class Computer : ObservableObject
     private bool _isScanning;
 
     [ObservableProperty] private bool _isSelected;
+    [ObservableProperty] private bool _isHidden;
     [ObservableProperty] private string _statusMessage = string.Empty;
 
     // ── Computed display helpers ─────────────────────────────────────────────

@@ -6,7 +6,13 @@
       "Bash(dotnet build *)",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(start \"\" \"bin\\\\Debug\\\\net9.0-windows\\\\win-x64\\\\AutodeskSoftwareManager.exe\")",
+      "Bash(gh repo *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "PowerShell(Get-Content \"C:\\\\Users\\\\dan\\\\OneDrive - xrift.com\\\\Projects\\\\AutodeskSoftwareManager\\\\scripts\\\\build.ps1\" -Raw | & { param\\($s\\) $null = [System.Management.Automation.Language.Parser]::ParseInput\\($s, [ref]$null, [ref]$null\\) }; Write-Host 'Parse OK' -ForegroundColor Green)",
+      "Bash(git commit *)"
     ]
   }
 }

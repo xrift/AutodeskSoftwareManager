@@ -7,6 +7,7 @@ using AutodeskSoftwareManager.Models;
 using AutodeskSoftwareManager.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 
 namespace AutodeskSoftwareManager.ViewModels;
 
@@ -28,6 +29,19 @@ public partial class ComputersViewModel : ObservableObject
     [ObservableProperty] private string _selectedStatus= "All";
     [ObservableProperty] private bool   _hasAutodesk;
     [ObservableProperty] private bool   _hasOutdated;
+    [ObservableProperty] private bool   _showHidden;
+
+    // ── Detail sidebar ────────────────────────────────────────────────────────
+    [ObservableProperty] private Computer? _detailComputer;
+    public ObservableCollection<InstalledProduct> DetailSoftware { get; } = [];
+
+    partial void OnDetailComputerChanged(Computer? value)
+    {
+        DetailSoftware.Clear();
+        if (value is null) return;
+        foreach (var p in App.Db.GetInstalledForComputer(value.Id))
+            DetailSoftware.Add(p);
+    }
 
     public ObservableCollection<string> OUList { get; } = ["All OUs"];
 
@@ -73,6 +87,19 @@ public partial class ComputersViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(IsIdle))]
+    private void HideSelected()
+    {
+        foreach (var c in Computers.Where(x => x.IsSelected).ToList())
+        {
+            c.IsHidden  = true;
+            c.IsSelected = false;
+            App.Db.SetComputerHidden(c.Id, true);
+        }
+        ComputerView.Refresh();
+        RefreshStats();
+    }
+
+    [RelayCommand(CanExecute = nameof(IsIdle))]
     private void RemoveSelected()
     {
         foreach (var c in Computers.Where(x => x.IsSelected).ToList())
@@ -80,6 +107,8 @@ public partial class ComputersViewModel : ObservableObject
             App.Db.DeleteComputer(c.Id);
             Computers.Remove(c);
         }
+        if (DetailComputer is not null && !Computers.Contains(DetailComputer))
+            DetailComputer = null;
         RefreshStats();
     }
 
@@ -90,12 +119,14 @@ public partial class ComputersViewModel : ObservableObject
     partial void OnSelectedStatusChanged(string value) => ComputerView.Refresh();
     partial void OnHasAutodeskChanged(bool value)      => ComputerView.Refresh();
     partial void OnHasOutdatedChanged(bool value)      => ComputerView.Refresh();
+    partial void OnShowHiddenChanged(bool value)       => ComputerView.Refresh();
 
     private bool ApplyFilter(object obj)
     {
         if (obj is not Computer c) return false;
         if (!string.IsNullOrEmpty(SearchText) &&
             !c.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) return false;
+        if (!ShowHidden && c.IsHidden)                    return false;
         if (SelectedOU != "All OUs" && c.OU != SelectedOU) return false;
         if (SelectedStatus == "Online"  && !c.IsOnline)  return false;
         if (SelectedStatus == "Offline" &&  c.IsOnline)  return false;
@@ -301,6 +332,7 @@ public partial class ComputersViewModel : ObservableObject
         ScanInventoryCommand.NotifyCanExecuteChanged();
         RefreshStatusCommand.NotifyCanExecuteChanged();
         AddComputerCommand.NotifyCanExecuteChanged();
+        HideSelectedCommand.NotifyCanExecuteChanged();
         RemoveSelectedCommand.NotifyCanExecuteChanged();
     }
 

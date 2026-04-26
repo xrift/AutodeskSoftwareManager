@@ -14,7 +14,7 @@ public class DatabaseService
         return conn.Query<Computer>(@"
             SELECT
                 c.id Id, c.name Name, c.description Description, c.ou OU,
-                c.notes Notes, c.is_online IsOnline,
+                c.notes Notes, c.is_online IsOnline, c.is_hidden IsHidden,
                 c.logged_in_user LoggedInUser,
                 c.last_seen LastSeen, c.last_scan LastScan,
                 COALESCE(s.product_count, 0) ProductCount,
@@ -74,6 +74,13 @@ public class DatabaseService
         using var conn = Database.Open();
         conn.Execute("UPDATE computers SET last_scan=@s WHERE id=@id;",
             new { s = DateTime.Now.ToString("o"), id = computerId });
+    }
+
+    public void SetComputerHidden(int id, bool hidden)
+    {
+        using var conn = Database.Open();
+        conn.Execute("UPDATE computers SET is_hidden=@h WHERE id=@id;",
+            new { h = hidden ? 1 : 0, id });
     }
 
     public void DeleteComputer(int id)
