@@ -5,7 +5,11 @@ namespace AutodeskSoftwareManager;
 
 public partial class MainWindow : Window
 {
-    public MainWindow() => InitializeComponent();
+    public MainWindow()
+    {
+        InitializeComponent();
+        DataContext = App.MainVm;
+    }
 
     private void Nav_Checked(object sender, RoutedEventArgs e)
     {

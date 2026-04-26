@@ -71,7 +71,7 @@
                           ItemsSource="{Binding OUList}"
                           SelectedItem="{Binding SelectedOU}"/>
                 <ComboBox Height="28" FontSize="12" MinWidth="130" Margin="0,0,10,0"
-                          SelectedValue="{Binding SelectedStatus}">
+                          SelectedValue="{Binding SelectedStatus}" SelectedValuePath="Content">
                     <ComboBoxItem Content="All"         IsSelected="True"/>
                     <ComboBoxItem Content="Outdated"/>
                     <ComboBoxItem Content="Up to Date"/>

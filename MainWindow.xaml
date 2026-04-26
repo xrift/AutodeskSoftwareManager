@@ -127,12 +127,16 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Ready  ·  Last scan: 2026-04-26  08:32 AM"
+                <TextBlock Grid.Column="0" Text="{Binding StatusText}"
                            Foreground="#5A6A8A" FontSize="11" VerticalAlignment="Center"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <Ellipse Width="7" Height="7" Fill="{StaticResource OnlineBrush}" Margin="0,0,5,0"/>
-                    <TextBlock Text="287 online" Foreground="#5A6A8A" FontSize="11"/>
-                    <TextBlock Text=" / 324 total" Foreground="#3A4A6A" FontSize="11"/>
+                    <TextBlock Foreground="#5A6A8A" FontSize="11">
+                        <Run Text="{Binding OnlineCount}"/><Run Text=" online"/>
+                    </TextBlock>
+                    <TextBlock Foreground="#3A4A6A" FontSize="11">
+                        <Run Text=" / "/><Run Text="{Binding TotalCount}"/><Run Text=" total"/>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
         </Border>

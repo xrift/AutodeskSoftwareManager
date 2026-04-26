@@ -16,6 +16,9 @@ public partial class MainViewModel : ObservableObject
         var (total, online, _, _, _) = App.Db.GetComputerStats();
         TotalCount  = total;
         OnlineCount = online;
+        StatusText  = total == 0
+            ? "Ready"
+            : $"Ready  ·  Last refreshed: {DateTime.Now:yyyy-MM-dd  hh:mm tt}";
     }
 
     public void SetBusy(bool busy, string message = "", int progress = 0)
