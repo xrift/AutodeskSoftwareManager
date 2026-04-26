@@ -1,0 +1,111 @@
+<UserControl x:Class="AutodeskSoftwareManager.Views.PackagesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="0" Background="White" Padding="14,10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="➕  Add Package" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                <Button Content="✏  Edit" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,8,0" IsEnabled="False"/>
+                <Button Content="🗑  Delete" Style="{StaticResource ToolbarButtonStyle}" IsEnabled="False"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="14,14,14,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="340"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Package grid -->
+            <DataGrid x:Name="PackageGrid" Grid.Column="0" Style="{StaticResource MainGridStyle}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Package Name" Width="200" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Product Family" Width="130" Binding="{Binding Family}"/>
+                    <DataGridTextColumn Header="Target Version" Width="120" Binding="{Binding Version}"/>
+                    <DataGridTextColumn Header="Silent Args" Width="160" Binding="{Binding Args}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="11"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Active" Width="65">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsActive}" HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" IsEnabled="False"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Created" Width="*" Binding="{Binding Created}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Add/Edit form panel -->
+            <Border Grid.Column="2" Background="White" CornerRadius="6" Padding="16"
+                    BorderBrush="#E0E0E0" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="ADD PACKAGE" FontSize="10.5" FontWeight="Bold" Foreground="#888"
+                               Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Package Name" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
+                    <TextBox Height="30" FontSize="12" Padding="8,4" BorderBrush="#CCC"
+                             Text="AutoCAD 2025 Update 1" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Product Family" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
+                    <ComboBox Height="30" FontSize="12" Margin="0,0,0,12" SelectedIndex="0">
+                        <ComboBoxItem>AutoCAD</ComboBoxItem>
+                        <ComboBoxItem>Revit</ComboBoxItem>
+                        <ComboBoxItem>Civil 3D</ComboBoxItem>
+                        <ComboBoxItem>Inventor</ComboBoxItem>
+                        <ComboBoxItem>3ds Max</ComboBoxItem>
+                        <ComboBoxItem>Maya</ComboBoxItem>
+                        <ComboBoxItem>Navisworks</ComboBoxItem>
+                        <ComboBoxItem>Other</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBlock Text="Target Version" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
+                    <TextBox Height="30" FontSize="12" Padding="8,4" BorderBrush="#CCC"
+                             Text="25.1.0.0" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Installer Path" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Height="30" FontSize="11" Padding="8,4" BorderBrush="#CCC"
+                                 Text="\\server\installers\AutoCAD2025_U1.exe" VerticalContentAlignment="Center"/>
+                        <Button Grid.Column="1" Content="Browse" Style="{StaticResource ToolbarButtonStyle}"
+                                Margin="6,0,0,0" FontSize="11" Padding="8,4"/>
+                    </Grid>
+
+                    <TextBlock Text="Silent Install Args" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
+                    <TextBox Height="30" FontSize="12" FontFamily="Consolas" Padding="8,4" BorderBrush="#CCC"
+                             Text="/qn /norestart" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Notes" FontSize="11.5" Foreground="#555" Margin="0,0,0,4"/>
+                    <TextBox Height="64" FontSize="12" Padding="8,6" BorderBrush="#CCC" TextWrapping="Wrap"
+                             AcceptsReturn="True" Margin="0,0,0,16"
+                             Text="Requires ADLS 16.3+ to be installed first."/>
+
+                    <CheckBox Content="Active (available for deployment)" IsChecked="True"
+                              FontSize="12" Foreground="#555" Margin="0,0,0,16"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="💾  Save Package" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                        <Button Content="Cancel" Style="{StaticResource ToolbarButtonStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
