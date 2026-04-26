@@ -25,12 +25,13 @@ $sw.Stop()
 if ($LASTEXITCODE -ne 0) {
     Write-Host ''
     Write-Host '  BUILD FAILED' -ForegroundColor Red
-    exit 1
+} else {
+    $outDir = Join-Path $root ('bin\' + $Configuration + '\net9.0-windows\win-x64')
+    Write-Host ''
+    Write-Host ('  Build succeeded in ' + $sw.Elapsed.TotalSeconds.ToString('0.0') + 's') -ForegroundColor Green
+    Write-Host ('  Output: ' + $outDir) -ForegroundColor DarkGray
 }
 
-$outDir = Join-Path $root ('bin\' + $Configuration + '\net9.0-windows\win-x64')
-
 Write-Host ''
-Write-Host ('  Build succeeded in ' + $sw.Elapsed.TotalSeconds.ToString('0.0') + 's') -ForegroundColor Green
-Write-Host ('  Output: ' + $outDir) -ForegroundColor DarkGray
-Write-Host ''
+Write-Host '  Press any key to close...' -ForegroundColor DarkGray
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
